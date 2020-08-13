@@ -147,30 +147,6 @@ class T5FineTuner(pl.LightningModule):
 
 logger = logging.getLogger(__name__)
 
-class LoggingCallback(pl.Callback):
-  def on_validation_end(self, trainer, pl_module):
-    logger.info("***** Validation results *****")
-    if pl_module.is_logger():
-      metrics = trainer.callback_metrics
-      # Log results
-      for key in sorted(metrics):
-        if key not in ["log", "progress_bar"]:
-          logger.info("{} = {}\n".format(key, str(metrics[key])))
-
-  def on_test_end(self, trainer, pl_module):
-    logger.info("***** Test results *****")
-
-    if pl_module.is_logger():
-      metrics = trainer.callback_metrics
-
-      # Log and save results to file
-      output_test_results_file = os.path.join(pl_module.hparams.output_dir, "test_results.txt")
-      with open(output_test_results_file, "w") as writer:
-        for key in sorted(metrics):
-          if key not in ["log", "progress_bar"]:
-            logger.info("{} = {}\n".format(key, str(metrics[key])))
-            writer.write("{} = {}\n".format(key, str(metrics[key])))
-
 args_dict = dict(
     data_dir="./Data", # path for data files
     output_dir="./Output", # path to save the checkpoints
@@ -298,7 +274,6 @@ train_params = dict(
     amp_level=args.opt_level,
     gradient_clip_val=args.max_grad_norm,
     checkpoint_callback=checkpoint_callback,
-    callbacks=[LoggingCallback()],
 )
 
 def get_dataset(tokenizer, type_path, args):

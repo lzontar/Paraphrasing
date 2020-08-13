@@ -172,8 +172,8 @@ class LoggingCallback(pl.Callback):
             writer.write("{} = {}\n".format(key, str(metrics[key])))
 
 args_dict = dict(
-    data_dir="", # path for data files
-    output_dir="", # path to save the checkpoints
+    data_dir="./Data", # path for data files
+    output_dir="./Output", # path to save the checkpoints
     model_name_or_path='t5-base',
     tokenizer_name_or_path='t5-base',
     max_seq_length=512,
@@ -260,11 +260,11 @@ class ParaphraseDataset(Dataset):
 
             # tokenize inputs
             tokenized_inputs = self.tokenizer.batch_encode_plus(
-                [input_], max_length=self.max_len, pad_to_max_length=True, return_tensors="pt"
+                [input_], max_length=self.max_len, truncation=True, pad_to_max_length=True, return_tensors="pt"
             )
             # tokenize targets
             tokenized_targets = self.tokenizer.batch_encode_plus(
-                [target], max_length=self.max_len, pad_to_max_length=True, return_tensors="pt"
+                [target], max_length=self.max_len, truncation=True, pad_to_max_length=True, return_tensors="pt"
             )
 
             self.inputs.append(tokenized_inputs)
